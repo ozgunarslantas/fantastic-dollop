@@ -1,9 +1,26 @@
 import React from "react"
-import { BrowserRouter, Route, Link } from "react-router-dom"
+import { Switch, Route, Link } from "react-router-dom"
+import wrongpage from "./wrongpage.jpg"
 
 const LoginPage = () => <div>Login Page</div>
 const HomePage = () => <div>Home Page</div>
 const NonHomePage = () => <div>NonHome Page</div>
+const WrongPage = () => (
+  <div
+    style={{
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      backgroundImage: `url("${wrongpage}")`,
+      backgroundPosition: "center",
+      flex: 1,
+      backgroundSize: "50% auto",
+      backgroundRepeat: "no-repeat",
+    }}
+  >
+    Wrong Page
+  </div>
+)
 
 const App = () => (
   <div
@@ -36,9 +53,12 @@ const App = () => (
         alignItems: "center",
       }}
     >
-      <Route path="/login" component={LoginPage} />
-      <Route path="/" exact component={HomePage} />
-      <Route path="/nonhome" component={NonHomePage} />
+      <Switch>
+        <Route path="/" exact component={HomePage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/nonhome" component={NonHomePage} />
+        <Route component={WrongPage} />
+      </Switch>
     </div>
   </div>
 )
