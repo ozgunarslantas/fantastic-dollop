@@ -1,5 +1,5 @@
 import React from "react"
-import { Switch, Route, Link } from "react-router-dom"
+import { Switch, Route, Link, Redirect } from "react-router-dom"
 import wrongpage from "./wrongpage.jpg"
 
 import { connect } from "react-redux"
@@ -90,7 +90,8 @@ const App = () => (
         <Route path="/" exact component={HomePage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/nonhome" component={NonHomePage} />
-        <Route component={WrongPage} />
+        <Route path="/404" exact component={WrongPage} />
+        <Redirect to="/404" />
       </Switch>
     </div>
   </div>
