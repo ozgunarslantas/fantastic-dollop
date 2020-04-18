@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react"
 import { isEmail } from "validator"
 import { Input, Stack, Flex, Heading, Button, Tooltip } from "@chakra-ui/core"
 
-const LoginPage = () => {
+const LoginForm = ({ onSubmit }) => {
   const [email, setEmail] = useState("")
   const [favPetName, setFavPetName] = useState("")
   const [favPetNameRepeat, setFavPetNameRepeat] = useState("")
@@ -21,12 +21,16 @@ const LoginPage = () => {
         <Heading size="sm">Email</Heading>
         <Input
           focusBorderColor={validators["email"] ? "lime" : "unset"}
+          isInvalid={!validators["email"] && email.length > 0}
+          errorBorderColor="crimson"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
         <Heading size="sm">Favorite Pet's Name</Heading>
         <Input
           focusBorderColor={validators["favPetName"] ? "lime" : "unset"}
+          isInvalid={!validators["favPetName"] && favPetName.length > 0}
+          errorBorderColor="crimson"
           value={favPetName}
           onChange={e => setFavPetName(e.target.value)}
         />
@@ -57,7 +61,7 @@ const LoginPage = () => {
         </Tooltip>
         <Button
           isDisabled={Object.values(validators).some(validator => !validator)}
-          onClick={() => alert("abov")}
+          onClick={onSubmit}
           variantColor="purple"
           marginTop="48px"
         >
@@ -68,4 +72,13 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+const LoginQuiz = () => {
+  return <div>easy peasy</div>
+}
+
+const LoginWithQuiz = () => {
+  const [step, setStep] = useState("FORM")
+  return step === "FORM" ? <LoginForm onSubmit={() => setStep("QUIZ")} /> : <LoginQuiz />
+}
+
+export default LoginWithQuiz
