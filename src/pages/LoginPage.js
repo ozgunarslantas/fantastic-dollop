@@ -76,6 +76,42 @@ const LoginForm = ({ onSubmit }) => {
   )
 }
 
+const QuizWrongAnswer = ({ tryAgainOnClick }) => (
+  <Flex direction="column" justify="center" maxWidth="400px">
+    <Text color="cyan" textAlign="center" fontSize="xl" padding="8px" cursor="default">
+      Sorry, cannot let you in.
+    </Text>
+    <Button variantColor="yellow" onClick={tryAgainOnClick}>
+      Try Again.
+    </Button>
+  </Flex>
+)
+
+const Questions = ({ questions, selectAnswer }) => (
+  <Flex direction="column" justify="space-evenly">
+    <Flex justify="center" maxWidth="400px">
+      <Text color="#202B33" textAlign="center" fontSize="xl" padding="8px" cursor="default">
+        {decodeURIComponent(questions.question)}
+      </Text>
+    </Flex>
+
+    <Flex direction="column" align="center" justify="center">
+      {questions.possible_answers.map((option, index) => (
+        <Button
+          key={index}
+          width="100%"
+          padding="8px"
+          marginBottom="8px"
+          variantColor="teal"
+          onClick={() => selectAnswer(option)}
+        >
+          {decodeURIComponent(option)}
+        </Button>
+      ))}
+    </Flex>
+  </Flex>
+)
+
 const LoginQuiz = () => {
   const [quizState, setQuizState] = useState("FETCHING_QUESTIONS")
   const [questions, setQuestions] = useState(null)
@@ -96,35 +132,20 @@ const LoginQuiz = () => {
     }
   }, [quizState])
 
+  const handleSelectedAnswer = answer => {
+    if (answer === questions.correct_answer.concat("*")) {
+      alert("bravo")
+    } else {
+      setQuizState("WRONG_ANSWER")
+    }
+  }
+
   return quizState === "FETCHING_QUESTIONS" ? (
     <HashLoader size="150px" color="#3182ce" />
+  ) : quizState === "WRONG_ANSWER" ? (
+    <QuizWrongAnswer tryAgainOnClick={() => setQuizState("FETCHING_QUESTIONS")} />
   ) : (
-    <Flex direction="column" justify="space-evenly">
-      <Flex justify="center" maxWidth="400px">
-        <Text color="#202B33" textAlign="center" fontSize="xl" padding="8px" cursor="default">
-          {decodeURIComponent(questions.question)}
-        </Text>
-      </Flex>
-
-      <Flex direction="column" align="center" justify="center">
-        {questions.possible_answers.map((option, index) => (
-          <Button
-            key={index}
-            width="75%"
-            maxWidth="400px"
-            minWidth="300px"
-            padding="8px"
-            marginBottom="8px"
-            variantColor="teal"
-            onClick={() =>
-              option === questions.correct_answer && alert(option === questions.correct_answer)
-            }
-          >
-            {decodeURIComponent(option)}
-          </Button>
-        ))}
-      </Flex>
-    </Flex>
+    <Questions questions={questions} selectAnswer={handleSelectedAnswer} />
   )
 }
 
