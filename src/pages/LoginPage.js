@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react"
 import { isEmail } from "validator"
 import { Input, Stack, Flex, Heading, Button, Tooltip, Text } from "@chakra-ui/core"
+import { useCountdownTimer } from "use-countdown-timer"
 
-import { HashLoader } from "react-spinners"
+import { HashLoader, ClockLoader } from "react-spinners"
 import axios from "axios"
 import { shuffle } from "../utils"
 
@@ -87,30 +88,45 @@ const QuizWrongAnswer = ({ tryAgainOnClick }) => (
   </Flex>
 )
 
-const Questions = ({ questions, selectAnswer }) => (
-  <Flex direction="column" justify="space-evenly">
-    <Flex justify="center" maxWidth="400px">
-      <Text color="#202B33" textAlign="center" fontSize="xl" padding="8px" cursor="default">
-        {decodeURIComponent(questions.question)}
-      </Text>
-    </Flex>
+const Questions = ({ questions, selectAnswer, timesUpHandler }) => {
+  const { countdown, start } = useCountdownTimer({
+    timer: 1000 * 10,
+    onExpire: () => timesUpHandler(),
+  })
+  useEffect(() => {
+    start()
+  }, [start])
+  return (
+    <Flex direction="column" justify="space-evenly">
+      <Flex align="center" justify="center" marginBottom="8px">
+        <ClockLoader size="36px" color="#d53f8c" />
+        <Text color="#d53f8c" marginLeft="12px" width="32px" textAlign="center" fontSize="xl">
+          {countdown / 1000}
+        </Text>
+      </Flex>
+      <Flex justify="center" maxWidth="400px">
+        <Text color="#202B33" textAlign="center" fontSize="xl" padding="8px" cursor="default">
+          {decodeURIComponent(questions.question)}
+        </Text>
+      </Flex>
 
-    <Flex direction="column" align="center" justify="center">
-      {questions.possible_answers.map((option, index) => (
-        <Button
-          key={index}
-          width="100%"
-          padding="8px"
-          marginBottom="8px"
-          variantColor="teal"
-          onClick={() => selectAnswer(option)}
-        >
-          {decodeURIComponent(option)}
-        </Button>
-      ))}
+      <Flex direction="column" align="center" justify="center">
+        {questions.possible_answers.map((option, index) => (
+          <Button
+            key={index}
+            width="100%"
+            padding="8px"
+            marginBottom="8px"
+            variantColor="teal"
+            onClick={() => selectAnswer(option)}
+          >
+            {decodeURIComponent(option)}
+          </Button>
+        ))}
+      </Flex>
     </Flex>
-  </Flex>
-)
+  )
+}
 
 const LoginQuiz = () => {
   const [quizState, setQuizState] = useState("FETCHING_QUESTIONS")
@@ -145,7 +161,11 @@ const LoginQuiz = () => {
   ) : quizState === "WRONG_ANSWER" ? (
     <QuizWrongAnswer tryAgainOnClick={() => setQuizState("FETCHING_QUESTIONS")} />
   ) : (
-    <Questions questions={questions} selectAnswer={handleSelectedAnswer} />
+    <Questions
+      questions={questions}
+      selectAnswer={handleSelectedAnswer}
+      timesUpHandler={() => setQuizState("WRONG_ANSWER")}
+    />
   )
 }
 

@@ -30,6 +30,7 @@
     "redux-act": "^1.8.0",
     "redux-observable": "^1.2.0",
     "typescript": "~3.7.2",
+    "use-countdown-timer": "^1.2.1",
     "validator": "^13.0.0"
   },
   "scripts": {
