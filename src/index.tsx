@@ -3,6 +3,8 @@ import ReactDOM from "react-dom"
 import "./index.css"
 import App from "./App"
 
+import { ThemeProvider, CSSReset } from "@chakra-ui/core"
+
 import { BrowserRouter } from "react-router-dom"
 
 import { createStore, compose, applyMiddleware } from "redux"
@@ -23,7 +25,10 @@ function render() {
   ReactDOM.render(
     <BrowserRouter>
       <Provider store={store}>
-        <App />
+        <ThemeProvider>
+          <CSSReset />
+          <App />
+        </ThemeProvider>
       </Provider>
     </BrowserRouter>,
     document.getElementById("root"),
