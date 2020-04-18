@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, Fragment } from "react"
 import { isEmail } from "validator"
 import { Input, Stack, Flex, Heading, Button, Tooltip, Text } from "@chakra-ui/core"
 import { useCountdownTimer } from "use-countdown-timer"
@@ -6,6 +6,10 @@ import { useCountdownTimer } from "use-countdown-timer"
 import { HashLoader, ClockLoader } from "react-spinners"
 import axios from "axios"
 import { shuffle } from "../utils"
+
+import { useDispatch, useSelector } from "react-redux"
+import { login } from "../actions"
+import { Redirect } from "react-router-dom"
 
 const LoginForm = ({ onSubmit }) => {
   const [email, setEmail] = useState("")
@@ -129,6 +133,8 @@ const Questions = ({ questions, selectAnswer, timesUpHandler }) => {
 }
 
 const LoginQuiz = () => {
+  const reduxDispatch = useDispatch()
+
   const [quizState, setQuizState] = useState("FETCHING_QUESTIONS")
   const [questions, setQuestions] = useState(null)
   useEffect(() => {
@@ -150,7 +156,7 @@ const LoginQuiz = () => {
 
   const handleSelectedAnswer = answer => {
     if (answer === questions.correct_answer.concat("*")) {
-      alert("bravo")
+      reduxDispatch(login())
     } else {
       setQuizState("WRONG_ANSWER")
     }
@@ -169,9 +175,17 @@ const LoginQuiz = () => {
   )
 }
 
-const LoginWithQuiz = () => {
+const LoginWithQuiz = ({ location }) => {
+  const { status } = useSelector(state => ({
+    status: state.login.status,
+  }))
   const [step, setStep] = useState("FORM")
-  return step === "FORM" ? <LoginForm onSubmit={() => setStep("QUIZ")} /> : <LoginQuiz />
+  return (
+    <div style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
+      {status === "LoggedIn" && <Redirect to={location.state || "/"} />}
+      {step === "FORM" ? <LoginForm onSubmit={() => setStep("QUIZ")} /> : <LoginQuiz />}
+    </div>
+  )
 }
 
 export default LoginWithQuiz

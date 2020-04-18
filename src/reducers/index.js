@@ -1,5 +1,5 @@
 import { createReducer } from "redux-act"
-import { boxMouseEnter } from "../actions"
+import { boxMouseEnter, login } from "../actions"
 
 const reducer = createReducer(
   {
@@ -7,8 +7,12 @@ const reducer = createReducer(
       ...state,
       values: { ...state.values, [payload]: (state.values[payload] || 0) + 1 },
     }),
+    [login]: state => ({ ...state, login: { status: "LoggedIn" } }),
   },
-  { values: {} },
+  {
+    values: {},
+    login: { status: "NotLoggedIn" },
+  },
 )
 
 export default reducer
