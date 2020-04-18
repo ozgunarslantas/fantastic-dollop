@@ -17,7 +17,9 @@ const WrongPage = () => (
       backgroundRepeat: "no-repeat",
     }}
   >
-    Wrong Page
+    <div style={{ marginTop: 48 }}>
+      Do not wander on your own, or you might end up just like him.
+    </div>
   </div>
 )
 
