@@ -1,6 +1,10 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { isEmail } from "validator"
-import { Input, Stack, Flex, Heading, Button, Tooltip } from "@chakra-ui/core"
+import { Input, Stack, Flex, Heading, Button, Tooltip, Text } from "@chakra-ui/core"
+
+import { HashLoader } from "react-spinners"
+import axios from "axios"
+import { shuffle } from "../utils"
 
 const LoginForm = ({ onSubmit }) => {
   const [email, setEmail] = useState("")
@@ -73,7 +77,55 @@ const LoginForm = ({ onSubmit }) => {
 }
 
 const LoginQuiz = () => {
-  return <div>easy peasy</div>
+  const [quizState, setQuizState] = useState("FETCHING_QUESTIONS")
+  const [questions, setQuestions] = useState(null)
+  useEffect(() => {
+    if (quizState === "FETCHING_QUESTIONS") {
+      axios
+        .get("https://opentdb.com/api.php?amount=1&difficulty=hard&type=multiple&encode=url3986")
+        .then(function (response) {
+          setQuestions(
+            response.data.results.map(({ incorrect_answers, correct_answer, question }) => ({
+              question,
+              correct_answer,
+              possible_answers: shuffle(incorrect_answers.concat(correct_answer.concat("*"))),
+            }))[0],
+          )
+          setQuizState("AWAITING_ANSWER")
+        })
+    }
+  }, [quizState])
+
+  return quizState === "FETCHING_QUESTIONS" ? (
+    <HashLoader size="150px" color="#3182ce" />
+  ) : (
+    <Flex direction="column" justify="space-evenly">
+      <Flex justify="center" maxWidth="400px">
+        <Text color="#202B33" textAlign="center" fontSize="xl" padding="8px" cursor="default">
+          {decodeURIComponent(questions.question)}
+        </Text>
+      </Flex>
+
+      <Flex direction="column" align="center" justify="center">
+        {questions.possible_answers.map((option, index) => (
+          <Button
+            key={index}
+            width="75%"
+            maxWidth="400px"
+            minWidth="300px"
+            padding="8px"
+            marginBottom="8px"
+            variantColor="teal"
+            onClick={() =>
+              option === questions.correct_answer && alert(option === questions.correct_answer)
+            }
+          >
+            {decodeURIComponent(option)}
+          </Button>
+        ))}
+      </Flex>
+    </Flex>
+  )
 }
 
 const LoginWithQuiz = () => {
