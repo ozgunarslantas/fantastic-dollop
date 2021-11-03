@@ -31,7 +31,7 @@
     "redux-observable": "^1.2.0",
     "typescript": "~3.7.2",
     "use-countdown-timer": "^1.2.1",
-    "validator": "^13.0.0"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
